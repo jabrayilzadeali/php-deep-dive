@@ -1,0 +1,21 @@
+{
+  "blogs": [
+    {
+      "id": 1,
+      "title": "Blog 1",
+      "description": "lorem ipsum",
+      "content": "Some Content"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Dragon",
+      "lastname": "Wrath",
+      "bio": "some Data",
+      "blogs": [
+        1
+      ]
+    }
+  ]
+}
