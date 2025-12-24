@@ -10,4 +10,4 @@ $data = file_get_contents('db/db.json');
 $json = json_decode($data, true);
 
 // file_put_contents('db/db.json', json_encode($json, JSON_PRETTY_PRINT), LOCK_EX);
-layout("resources/views/pages/home.php", ["okay" => $okay]);
+layout("resources/views/pages/blogs.php", ["okay" => $okay]);
