@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 define('BASE_PATH', __DIR__);
 require_once BASE_PATH . "/resources/views/layouts/layout.php";
@@ -9,5 +10,9 @@ $okay = '-----big=okay-----';
 $data = file_get_contents('db/db.json');
 $json = json_decode($data, true);
 
+
+require_once BASE_PATH . '/router.php';
+
+
 // file_put_contents('db/db.json', json_encode($json, JSON_PRETTY_PRINT), LOCK_EX);
-layout("resources/views/pages/home.php", ["okay" => $okay]);
+// layout("resources/views/pages/home.php", ["okay" => $okay]);
