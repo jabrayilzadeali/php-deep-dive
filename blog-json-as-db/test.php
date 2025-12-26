@@ -6,4 +6,5 @@ function sum(float $a, float $b): float {
 
 // Note that a float will be returned.
 // var_dump(sum('1', '2'));
-var_dump(sum(1, 2));
+// var_dump(sum(1, 2));
+echo trim('{okay}', '*');
