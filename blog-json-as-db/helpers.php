@@ -6,28 +6,6 @@ function dump($var)
   echo '</pre>';
 }
 
-// function dd($var)
-// {
-//   echo '<pre>';
-//   var_dump($var);
-//   echo '</pre>';
-//   die();
-// }
-
-// function dd(...$vars)
-// {
-//   foreach ($vars as $var) {
-//     echo '<pre style="background:#111;color:#eee;padding:10px;border-radius:6px;">';
-//     if (is_array($var) || is_object($var)) {
-//       echo htmlspecialchars(print_r($var, true));
-//     } else {
-//       var_dump($var);
-//     }
-//     echo '</pre>';
-//   }
-//   die();
-// }
-
 function dd(...$vars)
 {
     foreach ($vars as $var) {

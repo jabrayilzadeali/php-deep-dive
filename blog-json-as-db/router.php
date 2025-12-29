@@ -3,81 +3,106 @@
 declare(strict_types=1);
 
 $ROUTES = [
-    // [
-    //     'uri' => ['/', '/home'],
-    //     'method' => 'get',
-    //     'controller' => 'home@index',
-    //     'name' => 'home'
-    // ],
     [
+        'id' => 0,
+        'uri' => '/',
+        'method' => 'GET',
+        'controller' => 'home@index',
+        'name' => 'home',
+    ],
+    [
+        'id' => 0,
+        'uri' => '/home',
+        'method' => 'GET',
+        'controller' => 'home@index',
+        'name' => 'home',
+    ],
+    [
+        'id' => 0,
+        'uri' => '/home/{home}',
+        'method' => 'GET',
+        'controller' => 'home@index',
+        'name' => 'home',
+    ],
+    [
+        'id' => 0,
+        'uri' => '/home/{cool}/okay',
+        'method' => 'GET',
+        'controller' => 'home@index',
+        'name' => 'home',
+    ],
+    [
+        'id' => 1,
         'uri' => '/blogs',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'blog@index',
         'name' => 'blogs',
-        'numberOfPortions' => 1,
     ],
     [
-        'uri' => '/tesdt',
-        'method' => 'get',
-        'controller' => 'blog@index',
-        'name' => 'blogs',
-        'numberOfPortions' => 1,
-    ],
-    [
+        'id' => 3,
         'uri' => '/blogs/create',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'blog@show',
         'name' => 'blog',
-        'numberOfPortions' => 2,
     ],
     [
+        'id' => 4,
         'uri' => '/blogs/{blog}',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'blog@show',
         'name' => 'blog',
-        'numberOfPortions' => 2,
     ],
     [
+        'id' => 5,
         'uri' => '/blogs/{blog}/comments',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'comment@index',
         'name' => 'comments',
-        'numberOfPortions' => 3,
     ],
     [
+        'id' => 6,
         'uri' => '/blogs/{blog}/zor/okay',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'comment@show',
         'name' => 'comments',
-        'numberOfPortions' => 4,
     ],
     [
+        'id' => 7,
         'uri' => '/blogs/{blog}/zor/{power}',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'comment@show',
         'name' => 'comments',
-        'numberOfPortions' => 4,
     ],
     [
+        'id' => 8,
         'uri' => '/blogs/{blog}/power/{power}',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'comment@show',
         'name' => 'comments',
-        'numberOfPortions' => 4,
     ],
     [
+        'id' => 9,
         'uri' => '/blogs/{blog}/comments/{comment}',
-        'method' => 'get',
+        'method' => 'GET',
         'controller' => 'comment@show',
         'name' => 'comments',
-        'numberOfPortions' => 4,
     ],
 ];
-function removeBrackets(string $x): string 
+
+$currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$currentUri = rtrim($currentUri, '/') ?: '/';
+$currentUriPortions = explode('/', ltrim($currentUri, '/'));
+$currentUriPortionsLength = count($currentUriPortions);
+$FILTERED_ROUTES = array_filter($ROUTES, fn($route) => count(explode('/', ltrim($route['uri'], '/'))) === $currentUriPortionsLength);
+
+$correctUri = null;
+$isFoundCorrectUrl = true;
+
+
+function removeBrackets(string $x): string
 {
     return substr($x, 1, -1);
 }
-
 function static_dynamic_url_portion(string $x): array
 {
     return [
@@ -86,55 +111,46 @@ function static_dynamic_url_portion(string $x): array
     ];
 }
 
-// dd($_SERVER);
+
+function correctUrl($uriPortions, $currentUriPortions, $route): bool
+{
+    if ($_SERVER['REQUEST_METHOD'] !== $route['method']) {
+        return false;
+    }
+    foreach ($uriPortions as $index => $portion) {
+        // echo $portion['value'] . ' => ' . $currentUriPortions[$index] . ' | ';
+        if ($portion['is_dynamic']) {
+            // echo $currentUriPortions[$index] . ' | ';
+            continue;
+        }
+        if ($portion['value'] !== $currentUriPortions[$index]) {
+            // $isFoundCorrectUrl = false;
+            return false;
+            // break;
+        }
+        // $isFoundCorrectUrl = true;
+    }
+
+    $correctUri = $route;
+    // $dynamicUriPortions = array_filter($uriPortions, fn($uriPortion) => $uriPortion['is_dynamic']);
+    foreach ($uriPortions as $index => $uriPortion) {
+        if (!$uriPortion['is_dynamic']) continue;
+
+        $paramName = removeBrackets($uriPortion['value']);
+        $paramValue = $currentUriPortions[$index];
+
+        $correctUri['dynamicValues'][$paramName] = $paramValue;
+    }
+
+    return true;
+}
+
 // $currentUri = $_SERVER['REQUEST_URI'];
 
-$currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$currentUri = rtrim($currentUri, '/') ?: '/';
-$currentUriPortions = explode('/', ltrim($currentUri, '/'));
-$currentUriPortionsLength = count($currentUriPortions);
-$FILTERED_ROUTES = array_filter($ROUTES, fn($route) => $route['numberOfPortions'] === $currentUriPortionsLength);
-
-// dd($FILTERED_ROUTES);
-$correctUri = null;
 foreach ($FILTERED_ROUTES as $route) {
     $uri = $route['uri'];
     $uriPortions = array_map('static_dynamic_url_portion', explode('/', ltrim($uri, '/')));
-
-    if (is_array($uri)) {
-        if (in_array($currentUri, $uri)) {
-            dd($currentUri);
-        }
-    } else if (is_string($uri)) {
-        // echo '<br>';
-        $isFoundCorrectUrl = true;
-        foreach ($uriPortions as $index => $portion) {
-            // echo $portion['value'] . ' => ' . $currentUriPortions[$index] . ' | ';
-            if ($portion['is_dynamic']) {
-                // echo $currentUriPortions[$index] . ' | ';
-                continue;
-            }
-            if ($portion['value'] !== $currentUriPortions[$index]) {
-                $isFoundCorrectUrl = false;
-                break;
-            }
-            // $isFoundCorrectUrl = true;
-        }
-
-        if ($isFoundCorrectUrl) {
-            $correctUri = $route;
-            // $dynamicUriPortions = array_filter($uriPortions, fn($uriPortion) => $uriPortion['is_dynamic']);
-            foreach ($uriPortions as $index => $uriPortion) {
-                if ($uriPortion['is_dynamic']) $correctUri['dynamicValues'][removeBrackets($uriPortion['value'])] = $currentUriPortions[$index];
-            }
-            
-
-            dd($correctUri);
-            break;
-        }
-    }
+    if (correctUrl($uriPortions, $currentUriPortions, $route)) dd($currentUri);
 }
 
-if (!$isFoundCorrectUrl) {
-    dd('404 not found');
-}
+dd('404 not found');
