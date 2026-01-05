@@ -8,3 +8,10 @@ function sum(float $a, float $b): float {
 // var_dump(sum('1', '2'));
 // var_dump(sum(1, 2));
 echo trim('{okay}', '*');
+
+// [ { ( aa, bb, "cc" ) } ]
+
+// f(aa, g(bb, cc))
+
+// ( ( ' " ` new(word) ` " ' ) )
+    
