@@ -1,0 +1,16 @@
+{
+  "name": "blog-json-as-db",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev:css": "tailwindcss -i ./app.css -o ./dist/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}

@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+
+require_once BASE_PATH . "/app/Http/Controllers/blogController.php";
+
 $ROUTES = [
     [
         'id' => 0,
@@ -12,16 +15,16 @@ $ROUTES = [
     ],
     [
         'id' => 0,
-        'uri' => '/home',
-        'method' => 'GET',
-        'controller' => 'HomeController@index',
+        'uri' => '/',
+        'method' => 'POST',
+        'controller' => 'HomeController@store',
         'name' => 'home',
     ],
     [
         'id' => 1,
         'uri' => '/blogs',
         'method' => 'GET',
-        'controller' => 'BlogController@index',
+        'controller' => fn () => BlogController\index(),
         'name' => 'blogs',
     ],
     [
@@ -74,6 +77,7 @@ $ROUTES = [
         'name' => 'comments',
     ],
 ];
+
 
 $currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $currentUri = rtrim($currentUri, '/') ?: '/';
@@ -137,7 +141,10 @@ foreach ($FILTERED_ROUTES as $route) {
     $uriPortions = array_map('static_dynamic_url_portion', explode('/', ltrim($uri, '/')));
     $correctUri = getCurrentUrlObj($uriPortions, $currentUriPortions, $route);
     if ($correctUri) {
-        // dd($route);
+        if (is_callable($route['controller']))  {
+            $route['controller']();
+            // dd('callable bro cool');
+        }
         [$file, $func] = explode('@', $route['controller']);
         // require_once BASE_PATH . "/app/Http/Controllers/BlogController.php";
         // extract($route['dynamicValues']);
@@ -148,8 +155,8 @@ foreach ($FILTERED_ROUTES as $route) {
         //
         // dd($correctUri, $correctUri['dynamicValues'], extract($correctUri['dynamicValues']));
         // dd(...$correctUri['dynamicValues']);
-        $params = $correctUri['dynamicValues'];
-        dd($params);
+        $params = $correctUri['dynamicValues'] ?? [];
+        // dd($params);
         $func(...$params);
         // dd($file, $func);
     };

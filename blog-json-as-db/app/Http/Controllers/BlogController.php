@@ -2,12 +2,21 @@
 
 declare(strict_types=1);
 
-// namespace BlogController;
 
+// class BlogController
+// {
+//     public function index()
+//     {
+//         dd('blog index page');
+//     }
+// }
+
+namespace BlogController;
 function index(): void {
+    // layout("home.php");
     dd('Blog index page');
 }
 
-function show($cool): void {
-    dd('Blog show page', $cool);
-}
+// function show($cool): void {
+//     dd('Blog show page', $cool);
+// }
